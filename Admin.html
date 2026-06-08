@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Errol Kotas - Admin Panel | Supabase Connected</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f0f2f5;
+        }
+        
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .admin-header {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .admin-header h1 {
+            font-size: 1.8rem;
+        }
+        
+        .admin-header h1 i {
+            color: #E4002B;
+            margin-right: 10px;
+        }
+        
+        .view-site-btn {
+            background-color: #E4002B;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .view-site-btn:hover {
+            background-color: #b30022;
+            transform: translateY(-2px);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .stat-card i {
+            font-size: 2.5rem;
+            color: #E4002B;
+            margin-bottom: 10px;
+        }
+        
+        .stat-card h3 {
+            font-size: 2rem;
+            color: #1a1a2e;
+        }
+        
+        .stat-card p {
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .section-title h2 {
+            font-size: 1.5rem;
+            color: #1a1a2e;
+            border-left: 4px solid #E4002B;
+            padding-left: 15px;
+        }
+        
+        .add-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .add-btn:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+        
+        .products-admin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .product-admin-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .product-admin-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .product-admin-img {
+            height: 180px;
+            background: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .product-admin-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .product-admin-info {
+            padding: 15px;
+        }
+        
+        .product-admin-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+        }
+        
+        .product-admin-info p {
+            color: #666;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        
+        .product-price-badge {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .product-price-badge .price {
+            color: #E4002B;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .category-badge {
+            background-color: #e9ecef;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+        }
+        
+        .admin-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        
+        .edit-btn, .delete-btn {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        
+        .edit-btn {
+            background-color: #ffc107;
+            color: #1a1a2e;
+        }
+        
+        .edit-btn:hover {
+            background-color: #e0a800;
+        }
+        
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 15px;
+            padding: 25px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .modal-content h3 {
+            margin-bottom: 20px;
+            color: #1a1a2e;
+            border-bottom: 2px solid #E4002B;
+            padding-bottom: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+        
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none;
+            border-color: #E4002B;
+        }
+        
+        .image-preview-container {
+            margin-top: 10px;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            background: #fafafa;
+        }
+        
+        .image-preview-container img {
+            max-width: 100%;
+            max-height: 200px;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+        
+        .no-image-preview {
+            color: #999;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .save-btn {
+            flex: 1;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .cancel-btn {
+            flex: 1;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #28a745;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            transform: translateX(400px);
+            transition: transform 0.3s;
+            z-index: 1100;
+        }
+        
+        .toast.show {
+            transform: translateX(0);
+        }
+        
+        .orders-section {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+        
+        .order-item {
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #fafafa;
+        }
+        
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .order-date {
+            color: #666;
+            font-size: 0.85rem;
+        }
+        
+        .order-details {
+            font-size: 0.9rem;
+        }
+        
+        .order-items-list {
+            margin-top: 8px;
+            padding-left: 15px;
+            color: #555;
+        }
+        
+        .no-orders {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        @media (max-width: 768px) {
+            .products-admin-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .admin-header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1><i class="fas fa-utensils"></i> ERROL KOTAS - ADMIN PANEL</h1>
+            <a href="#" class="view-site-btn" target="_blank"><i class="fas fa-eye"></i> View Customer Site</a>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="fas fa-hamburger"></i>
+                <h3 id="totalProducts">0</h3>
+                <p>Total Products</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-shopping-cart"></i>
+                <h3 id="totalOrders">0</h3>
+                <p>Total Orders</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-tag"></i>
+                <h3 id="totalCategories">0</h3>
+                <p>Categories</p>
+            </div>
+        </div>
+        
+        <div class="section-title">
+            <h2><i class="fas fa-box"></i> Manage Products</h2>
+            <button class="add-btn" id="addProductBtn"><i class="fas fa-plus"></i> Add New Product</button>
+        </div>
+        
+        <div id="productsList" class="products-admin-grid">
+            <div style="text-align:center; padding:40px;"><i class="fas fa-spinner fa-pulse"></i> Loading products from Supabase...</div>
+        </div>
+        
+        <div class="orders-section">
+            <div class="section-title">
+                <h2><i class="fas fa-receipt"></i> Customer Orders</h2>
+                <button id="clearOrdersBtn" class="add-btn" style="background-color: #dc3545;"><i class="fas fa-trash"></i> Clear All Orders</button>
+            </div>
+            <div id="ordersList">
+                <div style="text-align:center; padding:40px;"><i class="fas fa-spinner fa-pulse"></i> Loading orders...</div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modalTitle">Add New Product</h3>
+            <input type="hidden" id="productId">
+            <div class="form-group">
+                <label>Product Name *</label>
+                <input type="text" id="prodName" placeholder="e.g., Classic Kota" required>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="prodDesc" rows="2" placeholder="Product description..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Price (R) *</label>
+                <input type="number" id="prodPrice" placeholder="45" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label>Product Image</label>
+                <input type="file" id="prodImageFile" accept="image/*">
+                <small style="color:#666; display:block; margin-top:5px;">Upload image (JPG, PNG, GIF - will be auto-resized)</small>
+                <div class="image-preview-container" id="imagePreviewContainer">
+                    <div class="no-image-preview" id="noImagePreview">
+                        <i class="fas fa-image"></i> No image selected
+                    </div>
+                    <img id="prodImagePreview" src="" alt="Preview" style="display:none; max-width:100%; max-height:200px; object-fit:contain;">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Category</label>
+                <select id="prodCategory">
+                    <option value="kota-chips">Kota & Chips</option>
+                    <option value="drinks">Drinks</option>
+                    <option value="burger">Burger</option>
+                    <option value="pizza">DAGWOOD</option>
+                    <option value="snacks">Snacks</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Badge (optional)</label>
+                <input type="text" id="prodBadge" placeholder="Bestseller, NEW, POPULAR">
+            </div>
+            <div class="modal-buttons">
+                <button class="save-btn" id="saveProductBtn"><i class="fas fa-save"></i> Save to Supabase</button>
+                <button class="cancel-btn" id="cancelModalBtn"><i class="fas fa-times"></i> Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="toast" class="toast">
+        <i class="fas fa-check-circle"></i> <span id="toastMessage">Success!</span>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <script>
+        // Initialize Supabase FIRST before anything else
+        const SUPABASE_URL = 'https://joacqpwfcgqksytwmjpp.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_1yQyD_7IVY-dX1EotfM0vQ_1Ay3-IkT';
+        const STORAGE_BUCKET = 'product-images';
+        
+        // Create supabase client immediately
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        let products = [];
+        let orders = [];
+        
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMessage');
+            toastMsg.textContent = message;
+            toast.style.backgroundColor = isError ? '#dc3545' : '#28a745';
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+                toast.style.backgroundColor = '#28a745';
+            }, 3000);
+        }
+        
+        // Resize image before upload
+        function resizeImage(file, maxWidth = 800, maxHeight = 800) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        if (width > maxWidth) {
+                            height = (height * maxWidth) / width;
+                            width = maxWidth;
+                        }
+                        if (height > maxHeight) {
+                            width = (width * maxHeight) / height;
+                            height = maxHeight;
+                        }
+                        
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        canvas.toBlob((blob) => {
+                            const resizedFile = new File([blob], file.name, {
+                                type: 'image/jpeg',
+                                lastModified: Date.now()
+                            });
+                            resolve(resizedFile);
+                        }, 'image/jpeg', 0.8);
+                    };
+                    img.onerror = reject;
+                    img.src = e.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+        
+        async function uploadProductImage(file, productId) {
+            if (!file) return null;
+            try {
+                showToast('Resizing image...');
+                const resizedFile = await resizeImage(file, 800, 800);
+                
+                const fileExt = 'jpg';
+                const fileName = `${productId}_${Date.now()}.${fileExt}`;
+                const filePath = `products/${fileName}`;
+                
+                showToast('Uploading image...');
+                const { error: uploadError } = await supabaseClient.storage
+                    .from(STORAGE_BUCKET)
+                    .upload(filePath, resizedFile, { upsert: true });
+                    
+                if (uploadError) throw uploadError;
+                
+                const { data: publicUrlData } = supabaseClient.storage
+                    .from(STORAGE_BUCKET)
+                    .getPublicUrl(filePath);
+                    
+                return publicUrlData.publicUrl;
+            } catch (error) {
+                console.error('Upload error:', error);
+                throw new Error('Failed to upload image: ' + error.message);
+            }
+        }
+        
+        async function loadProductsFromSupabase() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('products')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                    
+                if (error) throw error;
+                
+                products = (data || []).map(item => ({
+                    id: item.id,
+                    name: item.name,
+                    desc: item.description || '',
+                    price: parseFloat(item.price),
+                    image: item.image || '',
+                    category: item.category || 'kota-chips',
+                    badge: item.badge || ''
+                }));
+                
+                renderProducts();
+                updateStats();
+                localStorage.setItem('framor_products', JSON.stringify(products));
+                return true;
+            } catch (error) {
+                console.error('Error loading products:', error);
+                showToast('Failed to load products: ' + error.message, true);
+                products = [];
+                renderProducts();
+                return false;
+            }
+        }
+        
+        async function saveProductToSupabase(productData) {
+            try {
+                let result;
+                if (productData.id) {
+                    const { data, error } = await supabaseClient
+                        .from('products')
+                        .update({
+                            name: productData.name,
+                            description: productData.description,
+                            price: productData.price,
+                            image: productData.image,
+                            category: productData.category,
+                            badge: productData.badge,
+                            updated_at: new Date()
+                        })
+                        .eq('id', productData.id)
+                        .select();
+                        
+                    if (error) throw error;
+                    result = data[0];
+                    showToast('Product updated successfully!');
+                } else {
+                    const { data, error } = await supabaseClient
+                        .from('products')
+                        .insert([{
+                            name: productData.name,
+                            description: productData.description,
+                            price: productData.price,
+                            image: productData.image || '',
+                            category: productData.category,
+                            badge: productData.badge || '',
+                            created_at: new Date(),
+                            updated_at: new Date()
+                        }])
+                        .select();
+                        
+                    if (error) throw error;
+                    result = data[0];
+                    showToast('Product added successfully!');
+                }
+                return result;
+            } catch (error) {
+                console.error('Save product error:', error);
+                showToast('Error: ' + error.message, true);
+                throw error;
+            }
+        }
+        
+        async function deleteProductFromSupabase(productId) {
+            try {
+                const { error } = await supabaseClient
+                    .from('products')
+                    .delete()
+                    .eq('id', productId);
+                    
+                if (error) throw error;
+                showToast('Product deleted successfully!');
+                return true;
+            } catch (error) {
+                console.error('Delete error:', error);
+                showToast('Failed to delete: ' + error.message, true);
+                throw error;
+            }
+        }
+        
+        // API Base URL - Your Python Backend
+        const API_BASE_URL = 'https://errolkotas.pythonanywhere.com';
+        
+        async function loadOrders() {
+    const container = document.getElementById('ordersList');
+    container.innerHTML = '<div style="text-align:center; padding:40px;"><i class="fas fa-spinner fa-pulse"></i> Loading orders from server...</div>';
+    
+    try {
+        // Fetch orders ONLY from Python backend API
+        const response = await fetch(`${API_BASE_URL}/api/orders`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        
+        const apiOrders = await response.json();
+        
+        // ONLY use API orders - NO localStorage fallback for display
+        if (apiOrders && apiOrders.length > 0) {
+            orders = apiOrders.map(order => ({
+                id: order.id,
+                name: order.customer_name,
+                phone: order.customer_phone,
+                email: order.customer_email,
+                address: order.delivery_address,
+                deliveryTime: order.delivery_time || 'asap',
+                paymentMethod: order.payment_method,
+                method: order.method || 'whatsapp',
+                items: order.items || [],
+                total: parseFloat(order.total),
+                date: new Date(order.created_at).toLocaleString(),
+                order_number: order.order_number,
+                status: order.status || 'pending'
+            }));
+        } else {
+            orders = [];
+        }
+        
+        renderOrders();
+        updateStats();
+        
+    } catch (error) {
+        console.error('Error loading orders from API:', error);
+        orders = [];
+        renderOrders();
+        updateStats();
+        showToast('❌ Failed to load orders from server', true);
+    }
+}
+        
+        async function refreshOrders() {
+            showToast('Refreshing orders from server...');
+            await loadOrders();
+        }
+        
+        async function updateOrderStatus(orderNumber, newStatus) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/orders/${orderNumber}/status`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: newStatus })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showToast(`✅ Order status updated to ${newStatus}`);
+            await loadOrders(); // Refresh the list
+        } else {
+            showToast(`❌ Failed: ${result.error}`, true);
+        }
+    } catch (error) {
+        console.error('Error updating order status:', error);
+        showToast('❌ Failed to update status', true);
+    }
+}
+        
+        function addRefreshButton() {
+            const ordersSection = document.querySelector('.orders-section .section-title');
+            if (ordersSection && !document.getElementById('refreshOrdersBtn')) {
+                const refreshBtn = document.createElement('button');
+                refreshBtn.id = 'refreshOrdersBtn';
+                refreshBtn.className = 'add-btn';
+                refreshBtn.style.backgroundColor = '#17a2b8';
+                refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh Orders';
+                refreshBtn.onclick = () => refreshOrders();
+                ordersSection.appendChild(refreshBtn);
+            }
+        }
+        
+        function renderOrders() {
+    const container = document.getElementById('ordersList');
+    if (!orders.length) {
+        container.innerHTML = '<div class="no-orders"><i class="fas fa-inbox" style="font-size:3rem; margin-bottom:10px; display:block;"></i>No orders yet. Orders will appear here when customers place them.</div>';
+        return;
+    }
+    
+    container.innerHTML = orders.map((order, idx) => `
+        <div class="order-item">
+            <div class="order-header">
+                <strong><i class="fas fa-user"></i> ${escapeHtml(order.name)}</strong>
+                <div>
+                    <span class="order-date"><i class="fas fa-calendar"></i> ${order.date || 'Unknown date'}</span>
+                    ${order.order_number ? `<span style="margin-left: 15px; background: #E4002B; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem;">${escapeHtml(order.order_number)}</span>` : ''}
+                </div>
+            </div>
+            <div class="order-details">
+                <div><i class="fas fa-phone"></i> ${escapeHtml(order.phone)}</div>
+                <div><i class="fas fa-envelope"></i> ${escapeHtml(order.email)}</div>
+                <div><i class="fas fa-map-marker-alt"></i> ${escapeHtml(order.address)}</div>
+                <div><i class="fas fa-clock"></i> Delivery: ${escapeHtml(order.deliveryTime)}</div>
+                <div><strong>Items:</strong></div>
+                <div class="order-items-list">
+                    ${order.items.map(item => `<div>• ${escapeHtml(item.name)} x${item.quantity} - R${(item.price * item.quantity).toFixed(2)}</div>`).join('')}
+                </div>
+                <div style="margin-top:10px; font-weight:bold; color:#E4002B;">Total: R${order.total.toFixed(2)}</div>
+                <div><i class="fab fa-whatsapp"></i> Ordered via: ${escapeHtml(order.method)}</div>
+                <div style="margin-top: 10px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                    <div>
+                        <span style="font-weight: bold;">Status:</span>
+                        <span class="order-status" style="
+                            background: ${order.status === 'delivered' ? '#28a745' : order.status === 'preparing' ? '#ffc107' : '#17a2b8'};
+                            color: ${order.status === 'preparing' ? '#333' : 'white'};
+                            padding: 3px 10px;
+                            border-radius: 20px;
+                            font-size: 0.75rem;
+                            margin-left: 5px;
+                        ">${order.status || 'pending'}</span>
+                    </div>
+                    ${order.order_number ? `
+                    <div style="display: flex; gap: 8px;">
+                        <button onclick="updateOrderStatus('${order.order_number}', 'preparing')" style="background: #ffc107; border: none; padding: 4px 12px; border-radius: 15px; cursor: pointer; font-size: 0.7rem;">🍳 Preparing</button>
+                        <button onclick="updateOrderStatus('${order.order_number}', 'out_for_delivery')" style="background: #17a2b8; border: none; padding: 4px 12px; border-radius: 15px; cursor: pointer; font-size: 0.7rem; color: white;">🛵 Out for Delivery</button>
+                        <button onclick="updateOrderStatus('${order.order_number}', 'delivered')" style="background: #28a745; border: none; padding: 4px 12px; border-radius: 15px; cursor: pointer; font-size: 0.7rem; color: white;">✅ Delivered</button>
+                    </div>
+                    ` : ''}
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+           
+        
+        function saveOrders() {
+            localStorage.setItem('framor_orders', JSON.stringify(orders));
+            window.dispatchEvent(new StorageEvent('storage', { key: 'framor_orders', newValue: JSON.stringify(orders) }));
+        }
+        
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+        
+        function renderProducts() {
+            const container = document.getElementById('productsList');
+            if (!products.length) {
+                container.innerHTML = '<div style="text-align:center; padding:40px; background:white; border-radius:12px;">✨ No products yet. Click "Add New Product" to get started! ✨</div>';
+                return;
+            }
+            
+            container.innerHTML = products.map(prod => `
+                <div class="product-admin-card">
+                    <div class="product-admin-img">
+                        <img src="${prod.image || 'https://via.placeholder.com/300x180?text=No+Image'}" alt="${escapeHtml(prod.name)}" onerror="this.src='https://via.placeholder.com/300x180?text=Image+Not+Found'">
+                    </div>
+                    <div class="product-admin-info">
+                        <h3>${escapeHtml(prod.name)}</h3>
+                        <p>${escapeHtml(prod.desc.substring(0, 80))}${prod.desc.length > 80 ? '...' : ''}</p>
+                        <div class="product-price-badge">
+                            <span class="price">R${prod.price.toFixed(2)}</span>
+                            <span class="category-badge">${escapeHtml(prod.category)}</span>
+                        </div>
+                        ${prod.badge ? `<span style="background:#E4002B; color:white; padding:2px 8px; border-radius:12px; font-size:0.7rem;">${escapeHtml(prod.badge)}</span>` : ''}
+                        <div class="admin-actions">
+                            <button class="edit-btn" onclick="editProductById('${prod.id}')"><i class="fas fa-edit"></i> Edit</button>
+                            <button class="delete-btn" onclick="deleteProductById('${prod.id}')"><i class="fas fa-trash"></i> Delete</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function updateStats() {
+            document.getElementById('totalProducts').textContent = products.length;
+            document.getElementById('totalOrders').textContent = orders.length;
+            const uniqueCategories = [...new Set(products.map(p => p.category))];
+            document.getElementById('totalCategories').textContent = uniqueCategories.length;
+        }
+        
+        window.editProductById = async (id) => {
+            const product = products.find(p => p.id == id);
+            if (!product) return;
+            
+            document.getElementById('modalTitle').textContent = 'Edit Product';
+            document.getElementById('productId').value = product.id;
+            document.getElementById('prodName').value = product.name;
+            document.getElementById('prodDesc').value = product.desc || '';
+            document.getElementById('prodPrice').value = product.price;
+            document.getElementById('prodCategory').value = product.category;
+            document.getElementById('prodBadge').value = product.badge || '';
+            
+            const previewImg = document.getElementById('prodImagePreview');
+            const noImageDiv = document.getElementById('noImagePreview');
+            
+            if (product.image) {
+                previewImg.src = product.image;
+                previewImg.style.display = 'block';
+                noImageDiv.style.display = 'none';
+            } else {
+                previewImg.style.display = 'none';
+                noImageDiv.style.display = 'block';
+            }
+            document.getElementById('prodImageFile').value = '';
+            document.getElementById('productModal').classList.add('active');
+        };
+        
+        window.deleteProductById = async (id) => {
+            const product = products.find(p => p.id == id);
+            if (!product) return;
+            if (confirm(`Are you sure you want to delete "${product.name}"? This cannot be undone.`)) {
+                try {
+                    await deleteProductFromSupabase(id);
+                    await loadProductsFromSupabase();
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+        };
+        
+        async function handleSaveProduct() {
+            const id = document.getElementById('productId').value;
+            const name = document.getElementById('prodName').value.trim();
+            const description = document.getElementById('prodDesc').value;
+            const price = parseFloat(document.getElementById('prodPrice').value);
+            const category = document.getElementById('prodCategory').value;
+            const badge = document.getElementById('prodBadge').value;
+            const fileInput = document.getElementById('prodImageFile');
+            
+            if (!name || isNaN(price) || price <= 0) {
+                showToast('Please enter valid product name and price', true);
+                return;
+            }
+            
+            const saveBtn = document.getElementById('saveProductBtn');
+            const originalText = saveBtn.innerHTML;
+            saveBtn.innerHTML = '<span class="loading-spinner"></span> Saving...';
+            saveBtn.disabled = true;
+            
+            try {
+                let imageUrl = '';
+                if (fileInput.files && fileInput.files[0]) {
+                    const tempId = id || `temp_${Date.now()}`;
+                    imageUrl = await uploadProductImage(fileInput.files[0], tempId);
+                }
+                
+                const productData = {
+                    id: id || undefined,
+                    name: name,
+                    description: description,
+                    price: price,
+                    image: imageUrl,
+                    category: category,
+                    badge: badge
+                };
+                
+                await saveProductToSupabase(productData);
+                await loadProductsFromSupabase();
+                document.getElementById('productModal').classList.remove('active');
+                resetModalForm();
+            } catch (error) {
+                console.error('Save error:', error);
+            } finally {
+                saveBtn.innerHTML = originalText;
+                saveBtn.disabled = false;
+            }
+        }
+        
+        function resetModalForm() {
+            document.getElementById('productId').value = '';
+            document.getElementById('prodName').value = '';
+            document.getElementById('prodDesc').value = '';
+            document.getElementById('prodPrice').value = '';
+            document.getElementById('prodCategory').value = 'kota-chips';
+            document.getElementById('prodBadge').value = '';
+            document.getElementById('prodImageFile').value = '';
+            
+            const previewImg = document.getElementById('prodImagePreview');
+            const noImageDiv = document.getElementById('noImagePreview');
+            previewImg.style.display = 'none';
+            noImageDiv.style.display = 'block';
+            previewImg.src = '';
+            document.getElementById('modalTitle').textContent = 'Add New Product';
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM fully loaded - attaching event listeners');
+            
+            const addProductBtn = document.getElementById('addProductBtn');
+            if (addProductBtn) {
+                addProductBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('Add product button clicked');
+                    resetModalForm();
+                    document.getElementById('productModal').classList.add('active');
+                });
+            }
+            
+            const saveProductBtn = document.getElementById('saveProductBtn');
+            if (saveProductBtn) {
+                saveProductBtn.addEventListener('click', handleSaveProduct);
+            }
+            
+            const cancelModalBtn = document.getElementById('cancelModalBtn');
+            if (cancelModalBtn) {
+                cancelModalBtn.addEventListener('click', function() {
+                    document.getElementById('productModal').classList.remove('active');
+                });
+            }
+            
+            const clearOrdersBtn = document.getElementById('clearOrdersBtn');
+if (clearOrdersBtn) {
+    clearOrdersBtn.addEventListener('click', async function() {
+        if (confirm('⚠️ Clear ALL customer orders from database? This cannot be undone!')) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/orders/clear`, {
+                    method: 'DELETE'
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    showToast('✅ All orders cleared from database');
+                    await loadOrders(); // Refresh the list
+                } else {
+                    showToast('❌ Failed to clear orders: ' + result.error, true);
+                }
+            } catch (error) {
+                console.error('Error clearing orders:', error);
+                showToast('❌ Failed to clear orders', true);
+            }
+        }
+    });
+}
+            
+            const prodImageFile = document.getElementById('prodImageFile');
+            if (prodImageFile) {
+                prodImageFile.addEventListener('change', async (e) => {
+                    const file = e.target.files[0];
+                    const previewImg = document.getElementById('prodImagePreview');
+                    const noImageDiv = document.getElementById('noImagePreview');
+                    
+                    if (file) {
+                        const resizedBlob = await resizeImage(file, 400, 400);
+                        const previewUrl = URL.createObjectURL(resizedBlob);
+                        previewImg.src = previewUrl;
+                        previewImg.style.display = 'block';
+                        noImageDiv.style.display = 'none';
+                        URL.revokeObjectURL(previewUrl);
+                    } else {
+                        previewImg.style.display = 'none';
+                        noImageDiv.style.display = 'block';
+                        previewImg.src = '';
+                    }
+                });
+            }
+            
+            window.onclick = (e) => {
+                const modal = document.getElementById('productModal');
+                if (e.target === modal) modal.classList.remove('active');
+            };
+            
+            window.addEventListener('storage', (e) => {
+                if (e.key === 'framor_orders') {
+                    loadOrders();
+                }
+            });
+            
+            loadProductsFromSupabase();
+            loadOrders();
+            addRefreshButton();
+        });
+    </script>
+</body>
+</html>
