@@ -2389,10 +2389,10 @@
 <script>
     // ==================== SECURITY & VALIDATION MODULE ====================
      //Disable right-click (basic protection)
-    //document.addEventListener('contextmenu', (e) => {
-       // e.preventDefault();
-       // return false;
-   // });
+    document.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        return false;
+    });
     
     // Disable common dev tools shortcuts
     document.addEventListener('keydown', (e) => {
